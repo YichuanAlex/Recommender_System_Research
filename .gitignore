@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+*.egg-info/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+._*
+Thumbs.db
+Spotlight-V100
+.Trashes
+
+# Logs
+*.log
+
+# Environment variables
+.env
+*.env
+
+# Credentials
+*.json
+!package-lock.json
+
+# Office backup files
+~$*.docx
+~$*.xlsx
+~$*.pptx
+*.tmp
+*.bak
+
+# Large data files
+*.csv
+data/
+datasets/
+
+# Model checkpoints
+*.pkl
+*.pth
