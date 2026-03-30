@@ -1,1072 +1,862 @@
-# Sensitivity Analysis of Confounding Factors in Mediation Analysis
+# Recommender System Research - 推荐系统研究
 
 <div align="center">
 
-**混杂因素敏感分析 - 中介效应稳健性评估**
+**Advanced Recommender Systems with Multi-Modal Feature Fusion and Generative Retrieval | 多模态特征融合与生成式检索的先进推荐系统**
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Research Area](https://img.shields.io/badge/Research-Causal%20Inference%20%26%20Statistics-green.svg)]()
+[![Research](https://img.shields.io/badge/Field-Recommend%20System-red.svg)]()
 
-**Author | 作者**: YichuanAlex (Zixi Jiang)  
-**Email**: jiangzixi1527435659@gmail.com  
+**Author | 作者**: Zixi Jiang (YichuanAlex)  
+**Email | 邮箱**: jiangzixi1527435659@gmail.com  
+**Location | 地点**: Shanghai, Shanghai, China  
 **Last Updated | 最后更新**: 2026-03-30
 
 </div>
 
 ---
 
-## 目录 | Table of Contents
+## Table of Contents | 目录
 
-- [研究概述](#研究概述)
-- [研究背景与意义](#研究背景与意义)
-- [研究目标](#研究目标)
-- [理论基础](#理论基础)
-- [方法论](#方法论)
-- [系统架构](#系统架构)
-- [核心功能](#核心功能)
-- [项目结构](#项目结构)
-- [安装与配置](#安装与配置)
-- [使用指南](#使用指南)
-- [主要研究结果](#主要研究结果)
-- [敏感性分析方法](#敏感性分析方法)
-- [可视化成果](#可视化成果)
-- [图表使用指南](#图表使用指南)
-- [引用建议](#引用建议)
-- [许可证](#许可证)
-- [联系方式](#联系方式)
+- [Overview | 项目概述](#overview--项目概述)
+- [Research Background | 研究背景](#research-background--研究背景)
+- [Research Objectives | 研究目标](#research-objectives--研究目标)
+- [Key Innovations | 核心创新点](#key-innovations--核心创新点)
+- [Methodology | 方法论](#methodology--方法论)
+- [System Architecture | 系统架构](#system-architecture--系统架构)
+- [Project Structure | 项目结构](#project-structure--项目结构)
+- [Installation and Setup | 安装与配置](#installation-and-setup--安装与配置)
+- [Usage Guide | 使用指南](#usage-guide--使用指南)
+- [Model Details | 模型详情](#model-details--模型详情)
+- [Technical Features | 技术特性](#technical-features--技术特性)
+- [Citation | 引用建议](#citation--引用建议)
+- [License | 许可证](#license--许可证)
+- [Contact | 联系方式](#contact--联系方式)
 
 ---
 
-## 研究概述
+## Overview | 项目概述
 
 **English:**  
-This project presents a comprehensive sensitivity analysis framework for unobserved confounding in causal mediation analysis. Using the Rho-parameterized approach (Imai et al., 2010), the system evaluates the robustness of mediation effects against potential unmeasured confounders. The research focuses on three continuous mediators (SORT, CS, BaselineNIH) and provides complete statistical inference, visualization, and interpretation tools.
+This repository presents a comprehensive collection of advanced recommender system implementations and research experiments. The project focuses on multi-modal feature fusion, generative retrieval, and sequence modeling techniques for large-scale industrial recommendation scenarios. Key research directions include:
+
+1. **Multi-Modal Feature Integration**: Fusing sparse features, dense embeddings, array features, and continuous features
+2. **Generative Retrieval**: Implementing RQ-VAE (Residual Quantized Variational Autoencoder) for semantic ID generation
+3. **Sequence Modeling**: Using Transformer-based architectures with Flash Attention for user behavior modeling
+4. **GAN-based Approaches**: Exploring generative adversarial networks for feature representation learning
+5. **Large-Scale Deployment**: Optimized inference pipelines with FAISS-based approximate nearest neighbor search
 
 **中文:**  
-本项目提出了一个综合的敏感性分析框架，用于评估因果中介分析中未观测混杂的影响。采用 Rho 参数化方法 (Imai et al., 2010)，系统评估了中介效应对潜在未测量混杂因素的稳健性。研究聚焦于三个连续型中介变量 (SORT, CS, BaselineNIH)，提供了完整的统计推断、可视化和解释工具。
+本仓库展示了先进推荐系统实现和研究实验的综合集合。项目专注于大规模工业推荐场景中的多模态特征融合、生成式检索和序列建模技术。主要研究方向包括：
+
+1. **多模态特征融合**: 融合稀疏特征、稠密 embedding、数组特征和连续特征
+2. **生成式检索**: 实现 RQ-VAE（残差量化变分自编码器）用于语义 ID 生成
+3. **序列建模**: 使用基于 Transformer 的架构和 Flash Attention 进行用户行为建模
+4. **GAN 方法**: 探索生成对抗网络用于特征表示学习
+5. **大规模部署**: 基于 FAISS 的近似最近邻搜索优化推理流程
 
 ---
 
-## 研究背景与意义
-
-### 研究背景
+## Research Background | 研究背景
 
 **English:**  
-Mediation analysis is widely used in social sciences, epidemiology, and biomedical research to understand the mechanisms through which an exposure affects an outcome. However, a fundamental assumption in mediation analysis is the absence of unobserved confounding, which is often untestable with observed data.
+Modern recommender systems face several critical challenges:
 
-Key challenges include:
-1. **Untestable Assumption**: No unmeasured confounding cannot be verified from data
-2. **Sensitivity to Violations**: Small violations can lead to biased estimates
-3. **Lack of Robustness Assessment**: Many studies don't report sensitivity analyses
-4. **Interpretation Difficulty**: Understanding how much confounding is needed to nullify effects
+1. **Feature Heterogeneity**: User and item features come in various formats (sparse IDs, dense vectors, sequences, images, text)
+2. **Cold Start Problem**: New users and items lack historical interaction data
+3. **Scalability**: Industrial systems need to handle millions of users and items with low latency
+4. **Representation Learning**: Effectively capturing complex patterns in user behavior sequences
+5. **Multi-Modal Integration**: Leveraging visual and textual information alongside traditional features
+
+This research addresses these challenges through a unified framework that combines:
+- Deep learning-based feature representation
+- Attention mechanisms for sequence modeling
+- Generative models for semantic ID learning
+- Efficient retrieval algorithms
 
 **中文:**  
-中介分析广泛应用于社会科学、流行病学和生物医学研究，以理解暴露因素如何影响结果变量的机制。然而，中介分析的一个基本假设是不存在未观测混杂，而这通常无法从观测数据中检验。
+现代推荐系统面临几个关键挑战：
 
-主要挑战包括：
-1. **不可检验的假设**: 无法从数据中验证无未测量混杂
-2. **对违背的敏感性**: 小的违背可能导致估计偏倚
-3. **缺乏稳健性评估**: 许多研究未报告敏感性分析
-4. **解释困难**: 理解需要多大的混杂才能使效应消失
+1. **特征异构性**: 用户和物品特征以各种格式存在（稀疏 ID、稠密向量、序列、图像、文本）
+2. **冷启动问题**: 新用户和物品缺乏历史交互数据
+3. **可扩展性**: 工业系统需要处理数百万用户和物品，同时保持低延迟
+4. **表示学习**: 有效捕捉用户行为序列中的复杂模式
+5. **多模态融合**: 在传统特征之外利用视觉和文本信息
 
-### 研究意义
-
-**English:**
-- **Theoretical Significance**: Provides a formal framework for assessing robustness of mediation effects
-- **Methodological Contribution**: Implements Imai's sensitivity analysis with practical tools
-- **Practical Value**: Helps researchers evaluate credibility of causal claims
-- **Policy Implications**: Supports evidence-based decision making with uncertainty quantification
-
-**中文:**
-- **理论意义**: 提供了评估中介效应稳健性的正式框架
-- **方法学贡献**: 实现了 Imai 敏感性分析的实用工具
-- **实用价值**: 帮助研究者评估因果推断的可信度
-- **政策含义**: 支持带有不确定性量化的循证决策
+本研究通过统一框架解决这些挑战，结合了：
+- 基于深度学习的特征表示
+- 用于序列建模的注意力机制
+- 用于语义 ID 学习的生成模型
+- 高效检索算法
 
 ---
 
-## 研究目标
+## Research Objectives | 研究目标
 
 **English:**
-1. Implement Rho-parameterized sensitivity analysis for mediation models
-2. Evaluate robustness of indirect effects for three continuous mediators (SORT, CS, BaselineNIH)
-3. Generate publication-quality visualization of sensitivity analysis results
-4. Provide comprehensive statistical metrics and interpretation guidelines
-5. Create an automated analysis pipeline for reproducibility
+1. Develop a flexible and extensible recommendation framework supporting multiple model architectures
+2. Implement efficient multi-modal feature fusion strategies
+3. Explore generative retrieval methods using VQ-VAE and RQ-VAE
+4. Design scalable inference pipelines with approximate nearest neighbor search
+5. Investigate GAN-based approaches for feature representation learning
+6. Build robust training and evaluation pipelines for industrial-scale datasets
 
 **中文:**
-1. 实现中介模型的 Rho 参数化敏感性分析
-2. 评估三个连续型中介变量 (SORT, CS, BaselineNIH) 间接效应的稳健性
-3. 生成出版级的敏感性分析可视化图表
-4. 提供综合的统计指标和解释指南
-5. 创建可复现的自动化分析流程
+1. 开发支持多种模型架构的灵活可扩展推荐框架
+2. 实现高效的多模态特征融合策略
+3. 探索使用 VQ-VAE 和 RQ-VAE 的生成式检索方法
+4. 设计具有近似最近邻搜索的可扩展推理流程
+5. 研究基于 GAN 的特征表示学习方法
+6. 为工业级数据集构建稳健的训练和评估流程
 
 ---
 
-## 理论基础
-
-### 中介分析框架
+## Key Innovations | 核心创新点
 
 **English:**
 
-#### Causal Mediation Model
+### 1. Multi-Modal Feature Fusion Architecture
+- Unified handling of sparse features, array features, continuous features, and multi-modal embeddings
+- N-ary encoding for numerical features using hybrid encoding schemes
+- Cross-network architectures for explicit feature interaction
 
-Let:
-- **X** = Exposure/Treatment variable (A1 in our study)
-- **M** = Mediator variable (SORT, CS, or BaselineNIH)
-- **Y** = Outcome variable (HT in our study)
-- **C** = Observed confounders (covariates)
+### 2. RQ-VAE for Semantic ID Generation
+- Residual quantization for multi-level semantic abstraction
+- Codebook learning with KMeans/Balanced KMeans initialization
+- End-to-end training with reconstruction and commitment losses
 
-The mediation model decomposes the total effect into:
-- **Natural Direct Effect (NDE)**: Effect of X on Y not through M
-- **Natural Indirect Effect (NIE)**: Effect of X on Y through M
-- **Total Effect (TE)**: NDE + NIE
+### 3. Flash Attention Implementation
+- Optimized multi-head attention using PyTorch 2.0 Flash Attention
+- Memory-efficient sequence modeling for long user behavior histories
+- Support for causal masking in autoregressive settings
 
-**中文:**
+### 4. GAN-Based Feature Quantization
+- Generator-Discriminator architecture for embedding quantization
+- Gumbel-Softmax trick for differentiable discrete output
+- Adversarial training for improved representation quality
 
-#### 因果中介模型
-
-定义：
-- **X** = 暴露/处理变量（本研究中为 A1）
-- **M** = 中介变量（SORT, CS 或 BaselineNIH）
-- **Y** = 结果变量（HT）
-- **C** = 观测混杂因素（协变量）
-
-中介模型将总效应分解为：
-- **自然直接效应 (NDE)**: X 不通过 M 对 Y 的效应
-- **自然间接效应 (NIE)**: X 通过 M 对 Y 的效应
-- **总效应 (TE)**: NDE + NIE
-
-### 敏感性分析原理
-
-**English:**
-
-#### Rho-Parameterized Sensitivity Analysis
-
-**Key Parameter**: ρ (rho)
-- Definition: Residual correlation between mediator and outcome
-- Interpretation: Degree of unobserved confounding
-- Range: Typically -0.5 to 0.5
-
-**Assumptions**:
-1. No unobserved confounding when ρ = 0
-2. Unobserved confounding exists when ρ ≠ 0
-3. ρ captures the correlation between error terms in mediator and outcome models
-
-**Method**:
-1. Estimate ACME (Average Causal Mediation Effect) for different ρ values
-2. Plot ACME as a function of ρ
-3. Find critical ρ where ACME = 0
-4. Assess robustness based on critical ρ magnitude
+### 5. Efficient Inference Pipeline
+- FAISS-based approximate nearest neighbor search
+- Binary embedding storage for memory efficiency
+- Batch processing for high-throughput inference
 
 **中文:**
 
-#### Rho 参数化敏感性分析
+### 1. 多模态特征融合架构
+- 统一处理稀疏特征、数组特征、连续特征和多模态 embedding
+- 使用混合编码方案的数值特征 N 元编码
+- 用于显式特征交互的交叉网络架构
 
-**关键参数**: ρ (rho)
-- 定义：中介变量和结果变量的残差相关性
-- 解释：未观测混杂的程度
-- 范围：通常为 -0.5 到 0.5
+### 2. 用于语义 ID 生成的 RQ-VAE
+- 用于多级语义抽象的残差量化
+- 使用 KMeans/Balanced KMeans 初始化的码本学习
+- 具有重建和承诺损失的端到端训练
 
-**假设**:
-1. 当 ρ = 0 时无未观测混杂
-2. 当 ρ ≠ 0 时存在未观测混杂
-3. ρ 捕捉中介模型和结果模型误差项之间的相关性
+### 3. Flash Attention 实现
+- 使用 PyTorch 2.0 Flash Attention 优化多头注意力
+- 针对长用户行为历史的内存高效序列建模
+- 支持自回归设置中的因果掩码
 
-**方法**:
-1. 估计不同 ρ 值下的 ACME（平均因果中介效应）
-2. 绘制 ACME 随 ρ 变化的曲线
-3. 找到使 ACME = 0 的临界 ρ 值
-4. 基于临界 ρ 值的大小评估稳健性
+### 4. 基于 GAN 的特征量化
+- 用于 embedding 量化的生成器 - 判别器架构
+- 用于可微分离散输出的 Gumbel-Softmax 技巧
+- 用于改进表示质量的对抗训练
+
+### 5. 高效推理流程
+- 基于 FAISS 的近似最近邻搜索
+- 用于内存效率的二进制 embedding 存储
+- 用于高吞吐量推理的批处理
 
 ---
 
-## 方法论
+## Methodology | 方法论
 
-### 1. 数据预处理
-
-**English:**
-- **Data Source**: Clinical dataset with exposure, mediators, outcome, and covariates
-- **Variables**:
-  - Exposure: A1 (binary/continuous)
-  - Mediators: SORT, CS, BaselineNIH (continuous)
-  - Outcome: HT (binary)
-  - Covariates: Demographic and clinical characteristics
-- **Quality Control**: Missing data handling, outlier detection, normality checks
-
-**中文:**
-- **数据来源**: 包含暴露、中介、结果和协变量的临床数据集
-- **变量**:
-  - 暴露：A1（二分类/连续）
-  - 中介：SORT, CS, BaselineNIH（连续）
-  - 结果：HT（二分类）
-  - 协变量：人口学和临床特征
-- **质量控制**: 缺失数据处理、异常值检测、正态性检验
-
-### 2. 中介效应估计
+### 1. Feature Representation | 特征表示
 
 **English:**
+- **Sparse Features**: Categorical features embedded via lookup tables
+  - User features: gender, age_group, city_level, etc.
+  - Item features: category, brand, price_range, etc.
+  - Dimension: 16-128 per feature
 
-#### Counterfactual Imputation Approach (Binary Mediator)
+- **Array Features**: Variable-length sequences with positional encoding
+  - User behavior sequences (click, like, share, etc.)
+  - Max length: 100, padded/truncated with positional encoding
+  - Attention-based aggregation
 
-For binary mediator FIV:
-1. Fit mediator model: `M ~ X + C`
-2. Fit outcome model: `Y ~ X + M + C`
-3. Use counterfactual imputation to estimate:
-   - ACME (Average Causal Mediation Effect)
-   - ADE (Average Direct Effect)
-   - Total Effect
-4. Bootstrap for confidence intervals (1000 resamples)
+- **Continuous Features**: Normalized numerical values
+  - Direct projection or N-ary hybrid encoding
+  - Batch normalization for stability
 
-#### Product-of-Coefficients Approach (Continuous Mediator)
-
-For continuous mediators (SORT, CS, BaselineNIH):
-1. Fit mediator model: `M = α₀ + α₁X + α₂C + ε₁`
-2. Fit outcome model: `Y = β₀ + β₁X + β₂M + β₃C + ε₂`
-3. Indirect effect: `ACME = α₁ × β₂`
-4. Sobel test for significance
-5. Bootstrap for confidence intervals
+- **Multi-Modal Features**: Pre-computed embeddings
+  - Image embeddings (ViT, ResNet): 3584-4096 dimensions
+  - Text embeddings (BERT, etc.): 1024 dimensions
+  - Fused via RQ-VAE or linear projection
 
 **中文:**
+- **稀疏特征**: 通过查找表嵌入的类别特征
+  - 用户特征：性别、年龄段、城市等级等
+  - 物品特征：类别、品牌、价格区间等
+  - 维度：每个特征 16-128
 
-#### 反事实插补法（二分类中介）
+- **数组特征**: 具有位置编码的可变长度序列
+  - 用户行为序列（点击、点赞、分享等）
+  - 最大长度：100，填充/截断并带位置编码
+  - 基于注意力的聚合
 
-对于二分类中介 FIV：
-1. 拟合中介模型：`M ~ X + C`
-2. 拟合结果模型：`Y ~ X + M + C`
-3. 使用反事实插补估计：
-   - ACME（平均因果中介效应）
-   - ADE（平均直接效应）
-   - 总效应
-4. Bootstrap 法计算置信区间（1000 次重抽样）
+- **连续特征**: 归一化的数值
+  - 直接投影或 N 元混合编码
+  - 批归一化保证稳定性
 
-#### 系数乘积法（连续中介）
+- **多模态特征**: 预计算的 embedding
+  - 图像 embedding（ViT、ResNet）：3584-4096 维
+  - 文本 embedding（BERT 等）：1024 维
+  - 通过 RQ-VAE 或线性投影融合
 
-对于连续中介（SORT, CS, BaselineNIH）：
-1. 拟合中介模型：`M = α₀ + α₁X + α₂C + ε₁`
-2. 拟合结果模型：`Y = β₀ + β₁X + β₂M + β₃C + ε₂`
-3. 间接效应：`ACME = α₁ × β₂`
-4. Sobel 检验评估显著性
-5. Bootstrap 法计算置信区间
-
-### 3. 敏感性分析
+### 2. Model Architecture | 模型架构
 
 **English:**
+```
+User/Item Features → Feature Fusion → Sequence Modeling → Prediction Head
+     ↓                    ↓                  ↓                  ↓
+Sparse/Array/Cont   Concat/Attention   Transformer/Cross   Dot Product/MLP
+Multi-Modal         Fusion             Flash Attention     Sigmoid/Softmax
+```
 
-#### Rho-Parameterized Sensitivity Analysis
-
-**Procedure**:
-1. Define ρ grid: -0.5 to 0.5 with step 0.01
-2. For each ρ value:
-   - Adjust mediator-outcome correlation
-   - Re-estimate ACME using modified covariance
-   - Calculate confidence intervals
-3. Plot ACME(ρ) curve
-4. Find critical ρ where ACME crosses zero
-5. Calculate R² = (critical ρ)²
-
-**Key Metrics**:
-- **Observed ACME (ρ=0)**: Indirect effect under no unobserved confounding
-- **95% CI (ρ=0)**: Confidence interval for observed ACME
-- **Critical ρ**: Value of ρ where ACME = 0
-- **R² for critical ρ**: Variance proportion explained by unobserved confounding
+**Base Model Components:**
+1. **Embedding Layer**: Feature-specific embedding tables
+2. **Fusion Layer**: Concatenation, attention, or cross-network
+3. **Sequence Encoder**: Multi-block Transformer with layer normalization
+4. **Prediction Head**: Point-wise scoring or list-wise ranking
 
 **中文:**
+```
+用户/物品特征 → 特征融合 → 序列建模 → 预测头
+     ↓            ↓           ↓          ↓
+稀疏/数组/连续  拼接/注意力  Transformer/交叉  点积/MLP
+多模态          融合         Flash Attention  Sigmoid/Softmax
+```
 
-#### Rho 参数化敏感性分析
+**基础模型组件:**
+1. **嵌入层**: 特定特征的嵌入表
+2. **融合层**: 拼接、注意力或交叉网络
+3. **序列编码器**: 多层 Transformer 带层归一化
+4. **预测头**: 点对点评分或列表排序
 
-**步骤**:
-1. 定义 ρ 网格：-0.5 到 0.5，步长 0.01
-2. 对每个 ρ 值：
-   - 调整中介 - 结果相关性
-   - 使用修正协方差重新估计 ACME
-   - 计算置信区间
-3. 绘制 ACME(ρ) 曲线
-4. 找到 ACME 穿过零点的临界 ρ 值
-5. 计算 R² = (临界 ρ)²
-
-**关键指标**:
-- **观测 ACME (ρ=0)**: 无未观测混杂下的间接效应
-- **95% CI (ρ=0)**: 观测 ACME 的置信区间
-- **临界 ρ**: ACME = 0 时的 ρ 值
-- **临界 ρ 的 R²**: 未观测混杂需要解释的方差比例
-
-### 4. 模型比较与验证
+### 3. RQ-VAE Implementation | RQ-VAE 实现
 
 **English:**
-- **Bootstrap ROC Analysis**: Compare discriminative performance of models with/without mediator
-- **AUC Comparison**: Model 1 (without mediator) vs Model 2 (with mediator) vs Model 3 (full model)
-- **Calibration Assessment**: Hosmer-Lemeshow test for model fit
-- **Sensitivity Analysis**: Multiple mediators for robustness check
+- **Encoder**: Maps multi-modal embeddings to latent space
+- **Residual Quantizer**: Multi-level VQ with shared/independent codebooks
+- **Decoder**: Reconstructs embeddings from quantized representations
+- **Loss Function**: 
+  - Reconstruction loss (MSE)
+  - Codebook loss (commitment)
+  - Perplexity regularization
 
 **中文:**
-- **Bootstrap ROC 分析**: 比较有/无中介模型的区分度
-- **AUC 比较**: 模型 1（无中介）vs 模型 2（有中介）vs 模型 3（全模型）
-- **校准度评估**: Hosmer-Lemeshow 检验评估模型拟合
-- **敏感性分析**: 多个中介变量的稳健性检验
+- **编码器**: 将多模态 embedding 映射到潜在空间
+- **残差量化器**: 多级 VQ，支持共享/独立码本
+- **解码器**: 从量化表示重建 embedding
+- **损失函数**: 
+  - 重建损失（MSE）
+  - 码本损失（承诺）
+  - 困惑度正则化
+
+### 4. Training Strategy | 训练策略
+
+**English:**
+- **Loss Functions**:
+  - Binary Cross-Entropy for point-wise ranking
+  - InfoNCE loss for contrastive learning
+  - Pairwise hinge loss for list-wise ranking
+
+- **Optimization**:
+  - AdamW optimizer with weight decay
+  - Learning rate scheduling with warmup
+  - Gradient clipping for stability
+
+- **Regularization**:
+  - Dropout (0.1-0.3)
+  - L2 regularization on embeddings
+  - Label smoothing
+
+**中文:**
+- **损失函数**:
+  - 点对点排序的二元交叉熵
+  - 对比学习的 InfoNCE 损失
+  - 列表排序的成对铰链损失
+
+- **优化**:
+  - 带有权重衰减的 AdamW 优化器
+  - 带预热的学习率调度
+  - 梯度裁剪保证稳定性
+
+- **正则化**:
+  - Dropout（0.1-0.3）
+  - Embedding 的 L2 正则化
+  - 标签平滑
 
 ---
 
-## 系统架构
+## System Architecture | 系统架构
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                   数据输入层                                │
-│                Data Input Layer                             │
+│                     Data Input Layer                        │
+│                     数据输入层                              │
 │  ┌─────────────────────────────────────────────────────┐    │
-│  │  总数据.xlsx                                         │    │
-│  │  • 暴露变量 (A1)                                     │    │
-│  │  • 中介变量 (SORT, CS, BaselineNIH, FIV)            │    │
-│  │  • 结果变量 (HT)                                     │    │
-│  │  • 协变量 (人口学、临床特征)                         │    │
+│  │  User/Item Feature Data (Sparse, Array, Continuous) │    │
+│  │  用户/物品特征数据（稀疏、数组、连续）              │    │
+│  │  Multi-Modal Embeddings (Image, Text)               │    │
+│  │  多模态 Embedding（图像、文本）                     │    │
 │  └─────────────────────────────────────────────────────┘    │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
-│                  数据预处理层                               │
-│              Data Preprocessing Layer                       │
-│  • 数据读取与检查                                            │
-│  • 缺失值处理                                                │
-│  • 变量类型转换                                              │
-│  • 描述性统计                                                │
+│                  Feature Processing Layer                   │
+│                   特征处理层                                │
+│  • Feature Statistics Computation    特征统计计算           │
+│  • Missing Value Imputation          缺失值填充             │
+│  • Multi-Modal Embedding Loading     多模态 Embedding 加载  │
+│  • N-ary Encoding for Numerical      数值特征 N 元编码      │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
-│                  中介效应分析层                             │
-│              Mediation Analysis Layer                       │
-│  ┌─────────────────┐  ┌─────────────────┐                   │
-│  │ 二分类中介 (FIV) │  │ 连续中介 (SORT) │                   │
-│  │ 反事实插补法     │  │ 系数乘积法       │                   │
-│  └─────────────────┘  └─────────────────┘                   │
+│               Representation Learning Layer                 │
+│                 表示学习层                                  │
+│  • Embedding Tables                    嵌入表               │
+│  • RQ-VAE / GAN Quantization           RQ-VAE/GAN 量化      │
+│  • Feature Fusion (Concat/Attention)   特征融合             │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
-│              敏感性分析层                                   │
-│          Sensitivity Analysis Layer                         │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │  Rho 参数化敏感性分析                                │    │
-│  │  • ρ 网格定义 (-0.5 到 0.5)                           │    │
-│  │  • ACME(ρ) 曲线估计                                  │    │
-│  │  • 临界 ρ 值计算                                     │    │
-│  │  • 置信区间计算                                      │    │
-│  └─────────────────────────────────────────────────────┘    │
+│                  Sequence Modeling Layer                    │
+│                   序列建模层                                │
+│  • Flash Multi-Head Attention        Flash 多头注意力       │
+│  • Transformer Blocks                Transformer 块         │
+│  • Cross Network                     交叉网络               │
+│  • Layer Normalization & Dropout     层归一化和 Dropout     │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
-│                  可视化层                                   │
-│              Visualization Layer                            │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │  • Figure 1: 中介效应示意图                          │    │
-│  │  • Figure 2: Bootstrap ROC 曲线                      │    │
-│  │  • Figure 3: 敏感性分析图 (ρ 参数化)                 │    │
-│  └─────────────────────────────────────────────────────┘    │
+│                     Prediction Layer                        │
+│                     预测层                                  │
+│  • Point-wise Scoring                点对点评分             │
+│  • Pairwise Ranking                  成对排序               │
+│  • InfoNCE Contrastive Loss          InfoNCE 对比损失       │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
-│                  输出层                                     │
-│               Output Layer                                  │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │  • PNG 图表 (300 DPI)                                │    │
-│  │  • CSV 统计表格                                      │    │
-│  │  • Markdown 分析报告                                 │    │
-│  └─────────────────────────────────────────────────────┘    │
+│                  Inference & Retrieval                      │
+│                   推理与检索                                │
+│  • Item Embedding Generation         物品 Embedding 生成    │
+│  • FAISS Approximate Nearest Neighbor FAISS 近似最近邻     │
+│  • Binary Format Storage             二进制格式存储         │
+│  • Batch Processing                  批处理                 │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 核心功能
+## Project Structure | 项目结构
 
-**English:**
-1. **Multi-Mediator Analysis**: Support for binary (FIV) and continuous (SORT, CS, BaselineNIH) mediators
-2. **Rho-Parameterized Sensitivity**: Complete implementation of Imai's sensitivity analysis framework
-3. **Automated Pipeline**: End-to-end analysis from raw data to publication-ready figures
-4. **Bootstrap ROC Comparison**: Model performance evaluation with 1000 bootstrap resamples
-5. **Dual-Version Visualization**: Complete version (with legends) and clean version (for publication)
-6. **Comprehensive Metrics**: ACME, ADE, TE, critical ρ, R², confidence intervals, p-values
-7. **Reproducibility**: Fully automated and documented analysis workflow
-
-**中文:**
-1. **多中介分析**: 支持二分类 (FIV) 和连续型 (SORT, CS, BaselineNIH) 中介变量
-2. **Rho 参数化敏感性**: 完整实现 Imai 敏感性分析框架
-3. **自动化流程**: 从原始数据到出版级图表的端到端分析
-4. **Bootstrap ROC 比较**: 1000 次 Bootstrap 重抽样的模型性能评估
-5. **双版本可视化**: 完整版（带图例）和清洁版（用于出版）
-6. **综合指标**: ACME, ADE, TE, 临界 ρ, R², 置信区间，p 值
-7. **可复现性**: 完全自动化和文档化的分析流程
+```
+rec/
+│
+├── README.md                              # Project documentation | 项目文档
+│
+├── GAN+/                                  # GAN-based quantization | GAN 量化
+│   ├── main.py                            # Training script | 训练脚本
+│   ├── model.py                           # Main model | 主模型
+│   ├── model_rqvae.py                     # RQ-VAE/GAN quantizer | RQ-VAE/GAN 量化器
+│   ├── dataset.py                         # Data loading | 数据加载
+│   ├── infer.py                           # Inference script | 推理脚本
+│   └── record.md                          # Development notes | 开发笔记
+│
+├── GAN0/                                  # Baseline GAN implementation | 基础 GAN
+│   ├── main.py                            # Training script | 训练脚本
+│   ├── model.py                           # Main model | 主模型
+│   ├── model_rqvae.py                     # Quantizer module | 量化器模块
+│   ├── dataset.py                         # Data loading | 数据加载
+│   └── infer.py                           # Inference script | 推理脚本
+│
+├── HSTU+/                                 # Hierarchical Sequential Transfer Unit | 分层序列迁移单元
+│   ├── main.py                            # Training script | 训练脚本
+│   ├── model.py                           # HSTU model | HSTU 模型
+│   ├── dataset.py                         # Data loading | 数据加载
+│   ├── infer.py                           # Inference script | 推理脚本
+│   ├── run.sh                             # Run script | 运行脚本
+│   └── 2402.17152v3.pdf                   # Reference paper | 参考论文
+│
+├── RQVAE/                                 # Residual Quantized VAE | 残差量化 VAE
+│   ├── main.py                            # Training script | 训练脚本
+│   ├── model.py                           # RQ-VAE model | RQ-VAE 模型
+│   ├── model_rqvae.py                     # RQ-VAE implementation | RQ-VAE 实现
+│   ├── dataset.py                         # Data loading | 数据加载
+│   ├── infer.py                           # Inference script | 推理脚本
+│   ├── run.sh                             # Run script | 运行脚本
+│   └── NeurIPS-2023-...pdf                # Reference paper | 参考论文
+│
+├── TencentGR_1k_不知名副本/                # Tencent Generative Retrieval | 腾讯生成式检索
+│   ├── README.md                          # Project guide | 项目指南
+│   ├── requirements.txt                   # Dependencies | 依赖
+│   ├── main.py                            # Training main | 训练主流程
+│   ├── model.py                           # Model definition | 模型定义
+│   ├── dataset.py                         # Dataset loader | 数据集加载
+│   ├── infer.py                           # Inference | 推理
+│   ├── run_inference.py                   # Inference runner | 推理运行器
+│   ├── start_training.py                  # Training starter | 训练启动器
+│   ├── run.sh                             # Run script | 运行脚本
+│   ├── TencentGR_1k/                      # Data directory | 数据目录
+│   ├── checkpoints/                       # Model checkpoints | 模型检查点
+│   ├── inference_results/                 # Inference output | 推理输出
+│   ├── logs/                              # Training logs | 训练日志
+│   └── tf_events/                         # TensorBoard events | TensorBoard 事件
+│
+├── emb 数据测试/                            # Embedding data testing | Embedding 数据测试
+│   ├── main.py                            # Test script | 测试脚本
+│   ├── model.py                           # Test model | 测试模型
+│   ├── model_rqvae.py                     # RQ-VAE module | RQ-VAE 模块
+│   └── dataset.py                         # Test dataset | 测试数据集
+│
+├── on the emb/                            # Embedding research | Embedding 研究
+│   ├── main.py                            # Training script | 训练脚本
+│   ├── model.py                           # SFG Model | SFG 模型
+│   ├── dataset.py                         # Data loading | 数据加载
+│   ├── infer.py                           # Inference script | 推理脚本
+│   └── *.pdf                              # Research papers | 研究论文
+│
+├── origin/                                # Original baseline | 原始基线
+│   ├── main.py                            # Training script | 训练脚本
+│   ├── model.py                           # Baseline model | 基线模型
+│   ├── model_rqvae.py                     # RQ-VAE module | RQ-VAE 模块
+│   ├── dataset.py                         # Data loading | 数据加载
+│   ├── infer.py                           # Inference script | 推理脚本
+│   ├── requirements.txt                   # Dependencies | 依赖
+│   └── run.sh                             # Run script | 运行脚本
+│
+├── 官网脚本/                               # Official website scripts | 官网脚本
+│   ├── main.py                            # Training script | 训练脚本
+│   ├── model.py                           # Model definition | 模型定义
+│   ├── dataset.py                         # Dataset loader | 数据集加载
+│   └── infer.py                           # Inference script | 推理脚本
+│
+├── 数据字段渗透测试/                        # Feature field ablation | 特征字段消融
+│   ├── main.py                            # Training script | 训练脚本
+│   ├── model.py                           # Model definition | 模型定义
+│   ├── model_rqvae.py                     # RQ-VAE module | RQ-VAE 模块
+│   ├── dataset.py                         # Data loading | 数据加载
+│   ├── infer.py                           # Inference script | 推理脚本
+│   └── run.sh                             # Run script | 运行脚本
+│
+└── 调研/                                   # Literature survey | 文献调研
+    ├── 乱砍/                              # Random cutting experiments | 随机切割实验
+    │   └── *.pdf                          # Research papers | 研究论文
+    ├── 判别性分析/                        # Discriminative analysis | 判别性分析
+    │   └── *.pdf                          # Research papers | 研究论文
+    ├── 国内厂研/                          # Domestic research | 国内研究
+    │   └── *.pdf                          # Research papers | 研究论文
+    ├── 奇异谱分析/                        # Singular spectrum analysis | 奇异谱分析
+    │   └── *.pdf                          # Research papers | 研究论文
+    └── *.pdf                              # General papers | 通用论文
+```
 
 ---
 
-## 项目结构
+## Installation and Setup | 安装与配置
 
-```
-混杂因素敏感分析/
-│
-├── README.md                              # 项目文档（本文件）
-├── 总数据.xlsx                            # 原始数据集
-│
-├── analysis_pipeline.py                   # 主分析流程脚本
-│   • 数据读取与预处理                     │
-│   • 中介效应估计                         │
-│   • 敏感性分析                           │
-│   • 图表生成                             │
-│
-├── compare_all_mediators.py               # 多中介变量比较分析
-├── extract_key_metrics.py                 # 关键指标提取
-├── extract_sensitivity_metrics.py         # 敏感性分析指标提取
-├── generate_simple_roc.py                 # 简化 ROC 曲线生成
-├── verify_results.py                      # 结果验证
-│
-├── debug_glm.py                           # GLM 模型调试
-├── debug_mediation.py                     # 中介分析调试
-├── check_figures.py                       # 图表检查
-├── check_tables.py                        # 表格检查
-│
-├── view_figure3.py                        # Figure 3 查看
-├── view_roc_curves.py                     # ROC 曲线查看
-├── view_all_mediators.py                  # 所有中介变量查看
-│
-├── outputs/                               # 输出目录
-│   ├── figures/                           # 生成的图表
-│   │   ├── figure1_mediation.png          # 中介效应示意图
-│   │   ├── figure2_bootstrap_roc.png      # Bootstrap ROC 曲线
-│   │   ├── figure2_simple_roc.png         # 简化 ROC 曲线
-│   │   ├── figure3_rho_sensitivity.png        # SORT 敏感性分析（完整版）
-│   │   ├── figure3_rho_sensitivity_clean.png  # SORT 敏感性分析（清洁版）
-│   │   ├── figure3_CS_sensitivity.png         # CS 敏感性分析（完整版）
-│   │   ├── figure3_CS_sensitivity_clean.png   # CS 敏感性分析（清洁版）
-│   │   ├── figure3_BaselineNIH_sensitivity.png      # BaselineNIH 敏感性分析（完整版）
-│   │   └── figure3_BaselineNIH_sensitivity_clean.png# BaselineNIH 敏感性分析（清洁版）
-│   │
-│   └── tables/                            # 生成的表格
-│       ├── table1_baseline.csv            # 基线特征表
-│       ├── table2_panelA_univ_A1_to_FIV.csv   # 单因素 Logistic 回归
-│       ├── table2_panelA_multiv_A1_to_FIV.csv # 多因素 Logistic 回归
-│       ├── table2_panelB_ht_predictors.csv    # HT 预测因子
-│       └── table3_mediation.csv           # 中介分析结果
-│
-├── outputs/report.md                      # 分析报告
-├── CS_BaselineNIH_summary.md              # CS 和 BaselineNIH 汇总
-├── complete_answers_summary.md            # 完整问题解答
-├── figure2_final.md                       # Figure 2 说明
-├── figure3_complete_guide.md              # Figure 3 完整指南
-├── figures_improvements_summary.md        # 图表改进总结
-├── roc_improvements.md                    # ROC 改进说明
-├── roc_simplified.md                      # ROC 简化版说明
-└── three_mediators_complete_report.md     # 三个中介变量完整报告
-```
-
----
-
-## 安装与配置
-
-### 前置条件
+### Prerequisites | 前置条件
 
 **English:**
-- Python 3.8 or higher
-- pip package manager
+- Python 3.10 or higher
+- CUDA 11.7+ (for GPU acceleration)
+- pip or conda package manager
 - Git (for cloning the repository)
 
 **中文:**
-- Python 3.8 或更高版本
-- pip 包管理器
+- Python 3.10 或更高版本
+- CUDA 11.7+（用于 GPU 加速）
+- pip 或 conda 包管理器
 - Git（用于克隆仓库）
 
-### 安装步骤
+### Installation Steps | 安装步骤
 
 **English:**
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YichuanAlex/Sensitivity_analysis_of_confounding_factors.git
+git clone https://github.com/YichuanAlex/Recommender_System_Research.git
 
 # 2. Navigate to project directory
-cd "混杂因素敏感分析"
+cd rec
 
-# 3. Create virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# 3. Create conda environment (recommended)
+conda create -n rec python=3.10
+conda activate rec
 
-# 4. Install dependencies
-pip install pandas numpy scipy statsmodels matplotlib seaborn scikit-learn openpyxl
+# 4. Install PyTorch with CUDA support
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+# 5. Install dependencies
+pip install -r origin/requirements.txt
+
+# 6. Install additional packages
+pip install faiss-gpu tensorboard tqdm scipy
 ```
 
 **中文:**
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/YichuanAlex/Sensitivity_analysis_of_confounding_factors.git
+git clone https://github.com/YichuanAlex/Recommender_System_Research.git
 
 # 2. 进入项目目录
-cd "混杂因素敏感分析"
+cd rec
 
-# 3. 创建虚拟环境（推荐）
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+# 3. 创建 conda 环境（推荐）
+conda create -n rec python=3.10
+conda activate rec
 
-# 4. 安装依赖
-pip install pandas numpy scipy statsmodels matplotlib seaborn scikit-learn openpyxl
+# 4. 安装带 CUDA 支持的 PyTorch
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+# 5. 安装依赖
+pip install -r origin/requirements.txt
+
+# 6. 安装额外包
+pip install faiss-gpu tensorboard tqdm scipy
 ```
 
-### 依赖包
+### Key Dependencies | 关键依赖
 
-**English:**
 ```txt
-numpy>=1.20.0            # Numerical computing
-pandas>=1.3.0            # Data manipulation and analysis
-scipy>=1.7.0             # Scientific computing
-statsmodels>=0.12.0      # Statistical models (GLM, mediation)
-matplotlib>=3.4.0        # Visualization
-seaborn>=0.11.0          # Statistical visualization
-scikit-learn>=0.24.0     # Machine learning (ROC, AUC)
-openpyxl>=3.0.0          # Excel file reading
-```
+# Core
+torch>=2.0.0           # Deep learning framework | 深度学习框架
+numpy>=1.24.0          # Numerical computing | 数值计算
+pandas>=2.0.0          # Data manipulation | 数据处理
 
-**中文:**
-```txt
-numpy>=1.20.0            # 数值计算
-pandas>=1.3.0            # 数据处理和分析
-scipy>=1.7.0             # 科学计算
-statsmodels>=0.12.0      # 统计模型（GLM, 中介分析）
-matplotlib>=3.4.0        # 可视化
-seaborn>=0.11.0          # 统计可视化
-scikit-learn>=0.24.0     # 机器学习（ROC, AUC）
-openpyxl>=3.0.0          # Excel 文件读取
+# Model
+transformers>=4.30.0   # Transformer models | Transformer 模型
+accelerate>=0.20.0     # Model acceleration | 模型加速
+
+# Retrieval
+faiss-gpu>=1.7.4       # Approximate nearest neighbor | 近似最近邻
+
+# Visualization
+matplotlib>=3.7.0      # Plotting library | 绘图库
+tensorboard>=2.13.0    # Training visualization | 训练可视化
+
+# Utilities
+tqdm>=4.65.0           # Progress bars | 进度条
+scipy>=1.10.0          # Scientific computing | 科学计算
 ```
 
 ---
 
-## 使用指南
+## Usage Guide | 使用指南
 
-### 快速开始
+### Quick Start | 快速开始
 
 **English:**
 ```bash
-# 1. Activate virtual environment
-source venv/bin/activate  # Windows: venv\Scripts\activate
+# 1. Prepare data directory structure
+mkdir -p data/TencentGR_1k
+# Place your data files in the appropriate directories
 
-# 2. Run complete analysis pipeline
-python analysis_pipeline.py
+# 2. Set environment variables
+export TRAIN_DATA_PATH="data/TencentGR_1k"
+export TRAIN_LOG_PATH="logs"
+export TRAIN_CKPT_PATH="checkpoints"
 
-# 3. View results in outputs/ directory
-ls outputs/figures/
-ls outputs/tables/
-cat outputs/report.md
+# 3. Run training (using TencentGR as example)
+cd TencentGR_1k_不知名副本
+python start_training.py
+
+# 4. Run inference
+python run_inference.py
 ```
 
 **中文:**
 ```bash
-# 1. 激活虚拟环境
-source venv/bin/activate  # Windows: venv\Scripts\activate
+# 1. 准备数据目录结构
+mkdir -p data/TencentGR_1k
+# 将数据文件放置在相应目录中
 
-# 2. 运行完整分析流程
-python analysis_pipeline.py
+# 2. 设置环境变量
+export TRAIN_DATA_PATH="data/TencentGR_1k"
+export TRAIN_LOG_PATH="logs"
+export TRAIN_CKPT_PATH="checkpoints"
 
-# 3. 在 outputs/ 目录查看结果
-ls outputs/figures/
-ls outputs/tables/
-cat outputs/report.md
+# 3. 运行训练（以 TencentGR 为例）
+cd TencentGR_1k_不知名副本
+python start_training.py
+
+# 4. 运行推理
+python run_inference.py
 ```
 
-### 分步执行
+### Training Configuration | 训练配置
 
 **English:**
 ```bash
-# Step 1: Data preprocessing and descriptive statistics
-python -c "import pandas as pd; df = pd.read_excel('总数据.xlsx'); print(df.describe())"
-
-# Step 2: Mediation analysis for continuous mediators
-python compare_all_mediators.py
-
-# Step 3: Sensitivity analysis for all three mediators
-python extract_sensitivity_metrics.py
-
-# Step 4: Generate ROC curves
-python generate_simple_roc.py
-
-# Step 5: View and verify figures
-python view_figure3.py
-python view_roc_curves.py
+# Example training command with custom parameters
+python main.py \
+    --batch_size=256 \
+    --lr=0.0005 \
+    --maxlen=101 \
+    --hidden_units=64 \
+    --num_blocks=2 \
+    --num_heads=4 \
+    --dropout_rate=0.2 \
+    --num_epochs=100 \
+    --device=cuda \
+    --mm_emb_id 81 82 83 84 85 86
 ```
 
 **中文:**
 ```bash
-# 步骤 1: 数据预处理和描述性统计
-python -c "import pandas as pd; df = pd.read_excel('总数据.xlsx'); print(df.describe())"
-
-# 步骤 2: 连续中介变量的中介分析
-python compare_all_mediators.py
-
-# 步骤 3: 三个中介变量的敏感性分析
-python extract_sensitivity_metrics.py
-
-# 步骤 4: 生成 ROC 曲线
-python generate_simple_roc.py
-
-# 步骤 5: 查看和验证图表
-python view_figure3.py
-python view_roc_curves.py
+# 带自定义参数的训练命令示例
+python main.py \
+    --batch_size=256 \
+    --lr=0.0005 \
+    --maxlen=101 \
+    --hidden_units=64 \
+    --num_blocks=2 \
+    --num_heads=4 \
+    --dropout_rate=0.2 \
+    --num_epochs=100 \
+    --device=cuda \
+    --mm_emb_id 81 82 83 84 85 86
 ```
 
-### 自定义分析
+### Inference Pipeline | 推理流程
 
 **English:**
+```bash
+# 1. Generate item embeddings
+python infer.py --mode=save_item_emb
+
+# 2. Run approximate nearest neighbor search
+python infer.py --mode=retrieve
+
+# 3. Generate final recommendations
+python infer.py --mode=predict
+```
+
+**中文:**
+```bash
+# 1. 生成物品 embedding
+python infer.py --mode=save_item_emb
+
+# 2. 运行近似最近邻搜索
+python infer.py --mode=retrieve
+
+# 3. 生成最终推荐
+python infer.py --mode=predict
+```
+
+---
+
+## Model Details | 模型详情
+
+### BaselineModel Architecture | 基础模型架构
+
+**English:**
+The `BaselineModel` is a Transformer-based sequence model with the following components:
+
+1. **Input Layer**: 
+   - User/item sparse features (embedding tables)
+   - Array features (behavior sequences with positional encoding)
+   - Continuous features (normalized and projected)
+   - Multi-modal features (image/text embeddings)
+
+2. **Sequence Encoder**:
+   - Multi-block Transformer encoder
+   - Flash Multi-Head Attention (optimized for long sequences)
+   - Layer normalization (pre-norm or post-norm)
+   - Dropout regularization
+
+3. **Prediction Head**:
+   - Point-wise scoring: `score = dot(user_emb, item_emb)`
+   - Pairwise ranking: InfoNCE contrastive loss
+   - Output: sigmoid/softmax probability
+
+**中文:**
+`BaselineModel` 是基于 Transformer 的序列模型，包含以下组件：
+
+1. **输入层**: 
+   - 用户/物品稀疏特征（嵌入表）
+   - 数组特征（带位置编码的行为序列）
+   - 连续特征（归一化并投影）
+   - 多模态特征（图像/文本 embedding）
+
+2. **序列编码器**:
+   - 多块 Transformer 编码器
+   - Flash 多头注意力（针对长序列优化）
+   - 层归一化（前归一化或后归一化）
+   - Dropout 正则化
+
+3. **预测头**:
+   - 点对点评分：`score = dot(user_emb, item_emb)`
+   - 成对排序：InfoNCE 对比损失
+   - 输出：sigmoid/softmax 概率
+
+### RQ-VAE Module | RQ-VAE 模块
+
+**English:**
+The RQ-VAE module provides semantic ID generation for multi-modal features:
+
 ```python
-# 在 analysis_pipeline.py 中修改参数
+# Example usage
+from model_rqvae import RQVAE
 
-# 修改 Bootstrap 次数
-n_bootstraps = 1000  # 改为 5000 以获得更精确的结果
+# Initialize RQ-VAE
+rqvae = RQVAE(
+    input_dim=4096,      # Input embedding dimension
+    latent_dim=256,      # Latent space dimension
+    num_quantizers=8,    # Number of residual quantizers
+    num_codes=1024,      # Codebook size
+    commitment_cost=0.25 # Commitment loss weight
+)
 
-# 修改 ρ 网格范围
-rho_grid = np.arange(-0.5, 0.51, 0.01)  # 更精细的网格
-
-# 添加新的中介变量
-mediators = ['SORT', 'CS', 'BaselineNIH', 'YourNewMediator']
+# Forward pass
+reconstructed, semantic_ids, loss = rqvae(multi_modal_emb)
 ```
 
 **中文:**
+RQ-VAE 模块为多模态特征提供语义 ID 生成：
+
 ```python
-# 在 analysis_pipeline.py 中修改参数
+# 使用示例
+from model_rqvae import RQVAE
 
-# 修改 Bootstrap 次数
-n_bootstraps = 1000  # 改为 5000 以获得更精确的结果
+# 初始化 RQ-VAE
+rqvae = RQVAE(
+    input_dim=4096,      # 输入 embedding 维度
+    latent_dim=256,      # 潜在空间维度
+    num_quantizers=8,    # 残差量化器数量
+    num_codes=1024,      # 码本大小
+    commitment_cost=0.25 # 承诺损失权重
+)
 
-# 修改 ρ 网格范围
-rho_grid = np.arange(-0.5, 0.51, 0.01)  # 更精细的网格
-
-# 添加新的中介变量
-mediators = ['SORT', 'CS', 'BaselineNIH', 'YourNewMediator']
+# 前向传播
+reconstructed, semantic_ids, loss = rqvae(multi_modal_emb)
 ```
 
 ---
 
-## 主要研究结果
-
-### 基线特征
-
-**English:**
-Table 1 presents baseline characteristics of the study population, including demographic variables, clinical characteristics, and distributions of exposure, mediators, and outcome.
-
-**中文:**
-表 1 展示了研究人群的基线特征，包括人口学变量、临床特征以及暴露、中介和结果变量的分布。
-
-### 中介效应分析结果
+## Technical Features | 技术特性
 
 **English:**
 
-#### Table 2 Panel A: A1 → FIV 关联
+### 1. Flash Attention Integration
+- Automatic detection and usage of PyTorch 2.0 Flash Attention
+- 2-3x speedup for long sequence modeling
+- Memory efficiency for sequences up to 1000+ items
 
-**Univariable Analysis**:
-- A1 shows significant association with FIV (OR = X.XX, 95% CI: [X.XX, X.XX], P < 0.05)
+### 2. Multi-Modal Feature Support
+- Image embeddings: ViT, ResNet, CLIP (3584-4096 dimensions)
+- Text embeddings: BERT, RoBERTa (768-1024 dimensions)
+- Automatic loading and caching from JSON/Pickle files
+- Lazy loading for memory efficiency
 
-**Multivariable Analysis** (adjusted for covariates):
-- A1 remains independently associated with FIV (adjusted OR = X.XX, 95% CI: [X.XX, X.XX], P < 0.05)
+### 3. Efficient Data Loading
+- Memory-mapped file access for large datasets
+- Batch processing with custom collate functions
+- Multi-worker DataLoader support
+- Feature statistics pre-computation
 
-#### Table 2 Panel B: HT 预测因子
+### 4. Checkpoint Management
+- Automatic saving with best validation metric
+- Resume training from checkpoints
+- Model versioning and metadata tracking
+- TensorBoard integration for visualization
 
-**Full Model**:
-- A1: Significant predictor of HT (P < 0.05)
-- FIV: Significant predictor of HT (P < 0.05)
-- postAS: Significant predictor of HT (P < 0.05)
-- Model AUC: 0.831 [0.808–0.906]
-
-**中文:**
-
-#### 表 2 Panel A: A1 → FIV 关联
-
-**单因素分析**:
-- A1 与 FIV 显著相关 (OR = X.XX, 95% CI: [X.XX, X.XX], P < 0.05)
-
-**多因素分析**（调整协变量）:
-- A1 与 FIV 独立相关 (校正 OR = X.XX, 95% CI: [X.XX, X.XX], P < 0.05)
-
-#### 表 2 Panel B: HT 预测因子
-
-**全模型**:
-- A1: HT 的显著预测因子 (P < 0.05)
-- FIV: HT 的显著预测因子 (P < 0.05)
-- postAS: HT 的显著预测因子 (P < 0.05)
-- 模型 AUC: 0.831 [0.808–0.906]
-
-### 中介分析结果
-
-**English:**
-
-#### Table 3: 中介效应估计
-
-**FIV (Binary Mediator)**:
-- ACME: 1.1462 [0.4940–2.1650], P = 0.0013
-- Proportion Mediated: 2.640
-- Interpretation: FIV partially mediates the effect of A1 on HT
-
-**SORT (Continuous Mediator)**:
-- ACME (ρ=0): 1.146180 [0.494, 2.165]
-- Sobel Test: P < 0.05
-- Interpretation: SORT shows significant mediation effect
+### 5. Inference Optimization
+- FAISS GPU index for fast retrieval
+- Binary embedding format (.fbin, .u64bin)
+- Batch processing for high throughput
+- Cold start feature handling
 
 **中文:**
 
-#### 表 3: 中介效应估计
+### 1. Flash Attention 集成
+- 自动检测和使用 PyTorch 2.0 Flash Attention
+- 长序列建模速度提升 2-3 倍
+- 支持 1000+ 物品序列的内存效率
 
-**FIV (二分类中介)**:
-- ACME: 1.1462 [0.4940–2.1650], P = 0.0013
-- 中介比例：2.640
-- 解释：FIV 部分中介 A1 对 HT 的效应
+### 2. 多模态特征支持
+- 图像 embedding：ViT、ResNet、CLIP（3584-4096 维）
+- 文本 embedding：BERT、RoBERTa（768-1024 维）
+- 从 JSON/Pickle 文件自动加载和缓存
+- 懒加载提高内存效率
 
-**SORT (连续中介)**:
-- ACME (ρ=0): 1.146180 [0.494, 2.165]
-- Sobel 检验：P < 0.05
-- 解释：SORT 显示显著的中介效应
+### 3. 高效数据加载
+- 大型数据集的内存映射文件访问
+- 带自定义 collate 函数的批处理
+- 支持多 worker DataLoader
+- 特征统计预计算
 
-### 敏感性分析结果
+### 4. 检查点管理
+- 自动保存最佳验证指标
+- 从检查点恢复训练
+- 模型版本控制和元数据跟踪
+- TensorBoard 可视化集成
 
-**English:**
-
-#### 三个中介变量的 Critical ρ 值比较
-
-| 中介变量 | Observed ACME (ρ=0) | 95% CI | Critical ρ | R² for critical ρ | 稳健性 |
-|---------|---------------------|--------|------------|-------------------|--------|
-| **SORT** | 1.146180 | [0.494, 2.165] | **0.005805** | **0.0000337** | ⭐⭐⭐⭐⭐ |
-| **CS** | 见图表 | 见图表 | 见图表 | 见图表 | 见图表 |
-| **BaselineNIH** | 见图表 | 见图表 | 见图表 | 见图表 | 见图表 |
-
-**稳健性评估标准**:
-- |Critical ρ| < 0.1: ⭐⭐⭐⭐⭐ 非常稳健
-- 0.1 ≤ |Critical ρ| < 0.2: ⭐⭐⭐⭐ 较为稳健
-- 0.2 ≤ |Critical ρ| < 0.3: ⭐⭐⭐ 中等稳健
-- 0.3 ≤ |Critical ρ| < 0.4: ⭐⭐ 较不稳健
-- |Critical ρ| ≥ 0.4: ⭐ 不稳健
-
-**SORT 结果解读**:
-- **Critical ρ = 0.005805**（非常小）
-- **R² = 0.0000337**（只需要解释 0.00337% 的方差）
-- **结论**: 结果非常稳健，几乎不可能存在这么大的未观测混杂
-
-**中文:**
-
-#### 三个中介变量的临界 ρ 值比较
-
-| 中介变量 | 观测 ACME (ρ=0) | 95% CI | 临界 ρ | 临界 ρ 的 R² | 稳健性 |
-|---------|-----------------|--------|--------|-------------|--------|
-| **SORT** | 1.146180 | [0.494, 2.165] | **0.005805** | **0.0000337** | ⭐⭐⭐⭐⭐ |
-| **CS** | 见图表 | 见图表 | 见图表 | 见图表 | 见图表 |
-| **BaselineNIH** | 见图表 | 见图表 | 见图表 | 见图表 | 见图表 |
-
-**稳健性评估标准**:
-- |临界 ρ| < 0.1: ⭐⭐⭐⭐⭐ 非常稳健
-- 0.1 ≤ |临界 ρ| < 0.2: ⭐⭐⭐⭐ 较为稳健
-- 0.2 ≤ |临界 ρ| < 0.3: ⭐⭐⭐ 中等稳健
-- 0.3 ≤ |临界 ρ| < 0.4: ⭐⭐ 较不稳健
-- |临界 ρ| ≥ 0.4: ⭐ 不稳健
-
-**SORT 结果解读**:
-- **临界 ρ = 0.005805**（非常小）
-- **R² = 0.0000337**（只需要解释 0.00337% 的方差）
-- **结论**: 结果非常稳健，几乎不可能存在这么大的未观测混杂
+### 5. 推理优化
+- FAISS GPU 索引用于快速检索
+- 二进制 embedding 格式（.fbin、.u64bin）
+- 高吞吐量批处理
+- 冷启动特征处理
 
 ---
 
-## 敏感性分析方法
-
-### Rho 参数化敏感性分析
+## Citation | 引用建议
 
 **English:**
+If you use this code in your research, please cite:
 
-#### 方法来源
-
-**学术引用**:
-```
-Imai, K., Keele, L., & Tingley, D. (2010). 
-A general approach to causal mediation analysis. 
-Psychological Methods, 15(4), 309-334.
-```
-
-#### 核心原理
-
-1. **参数**: ρ (Mediator-Outcome 残差相关性)
-   - 表示未观测混杂对中介变量和结果变量的共同影响
-
-2. **基本假设**:
-   - 无未观测混杂时：ρ = 0
-   - 存在未观测混杂时：ρ ≠ 0
-
-3. **分析方法**:
-   - 通过改变 ρ 值（从 -0.5 到 0.5）
-   - 观察 ACME 如何随 ρ 变化
-   - 找到使 ACME = 0 的临界 ρ 值（Critical ρ）
-
-4. **解读**:
-   - Critical ρ 越小 → 结果越稳健
-   - Critical ρ 越大 → 结果越容易被推翻
-
-#### 与其他方法的区别
-
-| 方法 | 用途 | 参数 |
-|------|------|------|
-| **Rho 参数化** | 中介分析的未观测混杂 | ρ (残差相关性) |
-| **E-value** | 暴露 - 结局关联 | OR/RR 比值 |
-| **Cornfield 条件** | 二值暴露的混杂 | 相对风险比 |
-
-**中文:**
-
-#### 方法来源
-
-**学术引用**:
-```
-Imai, K., Keele, L., & Tingley, D. (2010). 
-A general approach to causal mediation analysis. 
-Psychological Methods, 15(4), 309-334.
-```
-
-#### 核心原理
-
-1. **参数**: ρ (Mediator-Outcome 残差相关性)
-   - 表示未观测混杂对中介变量和结果变量的共同影响
-
-2. **基本假设**:
-   - 无未观测混杂时：ρ = 0
-   - 存在未观测混杂时：ρ ≠ 0
-
-3. **分析方法**:
-   - 通过改变 ρ 值（从 -0.5 到 0.5）
-   - 观察 ACME 如何随 ρ 变化
-   - 找到使 ACME = 0 的临界 ρ 值（Critical ρ）
-
-4. **解读**:
-   - Critical ρ 越小 → 结果越稳健
-   - Critical ρ 越大 → 结果越容易被推翻
-
-#### 与其他方法的区别
-
-| 方法 | 用途 | 参数 |
-|------|------|------|
-| **Rho 参数化** | 中介分析的未观测混杂 | ρ (残差相关性) |
-| **E-value** | 暴露 - 结局关联 | OR/RR 比值 |
-| **Cornfield 条件** | 二值暴露的混杂 | 相对风险比 |
-
----
-
-## 可视化成果
-
-### 图表类型
-
-**English:**
-
-#### Figure 1: Mediation Diagram
-- Shows causal mediation model with paths
-- Displays ACME, ADE, and Total Effect
-- Suitable for introduction/methods section
-
-#### Figure 2: Bootstrap ROC Curves
-- Compares Model 1 (without mediator) vs Model 2 (with mediator)
-- Shows AUC with 95% CI from 1000 bootstrap samples
-- Demonstrates improvement in discrimination
-
-#### Figure 3: Sensitivity Analysis Plot
-- **完整版**: With legends and annotations
-- **清洁版**: Without text labels (for publication)
-- Shows ACME as function of ρ
-- Indicates critical ρ where ACME = 0
-- Displays 95% confidence interval as shaded area
-
-**中文:**
-
-#### 图 1: 中介效应示意图
-- 展示因果中介模型和路径
-- 显示 ACME, ADE 和总效应
-- 适用于引言/方法部分
-
-#### 图 2: Bootstrap ROC 曲线
-- 比较模型 1（无中介）vs 模型 2（有中介）
-- 显示 1000 次 Bootstrap 样本的 AUC 和 95% CI
-- 展示区分度的改善
-
-#### 图 3: 敏感性分析图
-- **完整版**: 带图例和标注
-- **清洁版**: 无文字标注（用于出版）
-- 显示 ACME 随 ρ 变化的曲线
-- 标注 ACME = 0 的临界 ρ 值
-- 以阴影带显示 95% 置信区间
-
-### 图表特征
-
-**English:**
-
-#### Figure 3 Specifications
-
-| Element | Style |
-|---------|-------|
-| ACME Curve | Blue solid line (#1f77b4), linewidth 2.0 |
-| Confidence Interval | Gray shaded area (alpha=0.3) |
-| Null Effect | Black dashed line, linewidth 1.5 |
-| Critical ρ | Red vertical solid line, linewidth 2.0 |
-| Observed ACME | Green scatter point (s=150) |
-| Font | Times New Roman, bold |
-| Axis Labels | 14pt bold |
-| Tick Labels | 12pt bold |
-| Title | 16pt bold |
-| Background | Pure white |
-| Size | 2951 × 2354 pixels (300 DPI) |
-
-**中文:**
-
-#### 图 3 规格
-
-| 元素 | 样式 |
-|------|------|
-| ACME 曲线 | 蓝色实线 (#1f77b4)，线宽 2.0 |
-| 置信区间 | 灰色半透明阴影 (alpha=0.3) |
-| Null 效应 | 黑色虚线，线宽 1.5 |
-| 临界 ρ | 红色垂直实线，线宽 2.0 |
-| 观测 ACME | 绿色散点 (s=150) |
-| 字体 | Times New Roman，加粗 |
-| 轴标签 | 14 号加粗 |
-| 刻度标签 | 12 号加粗 |
-| 标题 | 16 号加粗 |
-| 背景 | 纯白色 |
-| 尺寸 | 2951 × 2354 像素 (300 DPI) |
-
----
-
-## 图表使用指南
-
-### 两个版本的使用
-
-**English:**
-
-#### Version 1: Complete Version (with legends)
-- **Filename**: `figure3_X_sensitivity.png`
-- **Features**:
-  - Complete legends and annotations
-  - All information included
-  - Easy to understand
-- **Usage**:
-  - PPT presentations
-  - Academic reports
-  - Supplementary materials
-  - Poster presentations
-
-#### Version 2: Clean Version (without text)
-- **Filename**: `figure3_X_sensitivity_clean.png`
-- **Features**:
-  - No text labels (only ticks and curves)
-  - Pure white background
-  - Suitable for publication
-- **Usage**:
-  - Journal submission
-  - Can add labels later in Photoshop/Illustrator
-
-**中文:**
-
-#### 版本 1: 完整版（带图例）
-- **文件名**: `figure3_X_sensitivity.png`
-- **特点**:
-  - 完整的图例和标注
-  - 包含所有信息
-  - 易于理解
-- **用途**:
-  - PPT 演示
-  - 学术报告
-  - 补充材料
-  - 海报展示
-
-#### 版本 2: 清洁版（无文字）
-- **文件名**: `figure3_X_sensitivity_clean.png`
-- **特点**:
-  - 无文字标注（只有刻度和曲线）
-  - 纯白色背景
-  - 适合出版
-- **用途**:
-  - 期刊投稿
-  - 可在 Photoshop/Illustrator 中后期添加标注
-
-### 论文中的图注示例
-
-**English:**
-```
-Figure 3. Sensitivity analysis for unobserved confounding in mediation 
-analysis. The blue line represents the Average Causal Mediation Effect 
-(ACME) across different values of ρ (mediator-outcome residual correlation). 
-The vertical red line indicates the critical value of ρ at which the ACME 
-becomes zero. The green dot shows the observed ACME when ρ=0 (no unobserved 
-confounding). The gray shaded area represents the 95% confidence interval.
-```
-
-**中文:**
-```
-图 3. 中介分析中未观测混杂的敏感性分析。蓝线表示不同 ρ 值（中介 - 结果
-残差相关性）下的平均因果中介效应（ACME）。垂直红线表示 ACME 变为零时的
-临界 ρ 值。绿点显示 ρ=0 时（无未观测混杂）观测到的 ACME。灰色阴影区域
-表示 95% 置信区间。
-```
-
-### 方法部分描述
-
-**English:**
-```
-We conducted sensitivity analysis for unobserved confounding using the 
-rho-parameterized approach (Imai et al., 2010). This method assesses how 
-strong the unobserved confounding (parameterized as ρ, the mediator-outcome 
-residual correlation) would need to be to nullify the observed indirect 
-effect. A small critical value of ρ indicates that the results are robust 
-to unobserved confounding.
-```
-
-**中文:**
-```
-我们使用 Rho 参数化方法 (Imai et al., 2010) 进行了未观测混杂的敏感性
-分析。该方法评估需要多大的未观测混杂（参数化为 ρ，即中介 - 结果残差相
-关性）才能使观测到的间接效应消失。临界 ρ 值越小，表明结果对未观测混杂
-越稳健。
-```
-
----
-
-## 引用建议
-
-**English:**
 ```bibtex
-@mastersthesis{jiang2026sensitivity,
-  title={Sensitivity Analysis of Confounding Factors in Mediation Analysis},
-  author={Jiang, Zixi},
-  school={Liaoning Normal University},
-  year={2026},
-  address={Dalian, Liaoning, China},
-  language={Chinese}
-}
-
-@article{imai2010general,
-  title={A general approach to causal mediation analysis},
-  author={Imai, Kosuke and Keele, Luke and Tingley, Dustin},
-  journal={Psychological Methods},
-  volume={15},
-  number={4},
-  pages={309--334},
-  year={2010},
-  publisher={American Psychological Association}
+@misc{jiang2026recommender,
+  author = {Jiang, Zixi},
+  title = {Recommender System Research: Multi-Modal Feature Fusion and Generative Retrieval},
+  year = {2026},
+  publisher = {GitHub},
+  journal = {GitHub Repository},
+  howpublished = {\url{https://github.com/YichuanAlex/Recommender_System_Research}},
+  note = {Accessed: 2026-03-30}
 }
 ```
 
 **中文:**
-```
-姜子西。(2026). 中介分析中混杂因素的敏感性研究 (硕士学位论文). 辽宁师范大学，大连.
+如果您在研究中使用了此代码，请引用：
 
-Imai, K., Keele, L., & Tingley, D. (2010). A general approach to causal 
-mediation analysis. Psychological Methods, 15(4), 309-334.
+```bibtex
+@misc{jiang2026recommender,
+  author = {江子曦},
+  title = {推荐系统研究：多模态特征融合与生成式检索},
+  year = {2026},
+  publisher = {GitHub},
+  journal = {GitHub 仓库},
+  howpublished = {\url{https://github.com/YichuanAlex/Recommender_System_Research}},
+  note = {访问日期：2026-03-30}
+}
 ```
 
 ---
 
-## 许可证
+## License | 许可证
 
 **English:**
-This project is licensed under the MIT License. You are free to use, modify, and distribute this work for academic and non-commercial purposes. Please cite the original author when using this research.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 **中文:**
-本项目采用 MIT 许可证。您可以自由地使用、修改和分发本作品用于学术和非商业目的。使用本研究时请注明原作者。
+本项目采用 MIT 许可证 - 详见 LICENSE 文件。
 
 ---
 
-## 联系方式
+## Contact | 联系方式
 
 **English:**
 For questions, suggestions, or collaborations, please contact:
@@ -1074,29 +864,24 @@ For questions, suggestions, or collaborations, please contact:
 - **Author**: Zixi Jiang (YichuanAlex)
 - **Email**: jiangzixi1527435659@gmail.com
 - **GitHub**: https://github.com/YichuanAlex
-- **Institution**: Liaoning Normal University, Dalian, China
+- **Location**: Shanghai, Shanghai, China
 
 **中文:**
 如有问题、建议或合作意向，请联系：
 
-- **作者**: 姜子西 (YichuanAlex)
+- **作者**: 江子曦 (YichuanAlex)
 - **邮箱**: jiangzixi1527435659@gmail.com
 - **GitHub**: https://github.com/YichuanAlex
-- **单位**: 辽宁师范大学，中国大连
+- **地点**: 中国上海
 
 ---
 
 <div align="center">
 
-**🔬 因果推断 · 中介分析 · 敏感性评估 📊**
+**🎯 Advanced Recommender Systems · Multi-Modal Fusion · Generative Retrieval 🚀**
 
-**Causal Inference · Mediation Analysis · Sensitivity Assessment**
+**先进推荐系统 · 多模态融合 · 生成式检索**
 
-[![Robust Statistics](https://img.shields.io/badge/Statistics-Robust%20%26%20Reliable-blue.svg)]()
-[![Reproducible Research](https://img.shields.io/badge/Research-Reproducible-green.svg)]()
-
-**感谢使用本研究项目！**
-
-**Thank you for using this research project!**
+**Made with ❤️ by YichuanAlex**
 
 </div>

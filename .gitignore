@@ -4,14 +4,11 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
-venv/
-ENV/
-build/
-*.egg-info/
 
-# Jupyter Notebook
-.ipynb_checkpoints
+# Virtual environments
+venv/
+env/
+ENV/
 
 # IDE
 .vscode/
@@ -24,32 +21,36 @@ build/
 .DS_Store
 ._*
 Thumbs.db
-Spotlight-V100
-.Trashes
 
 # Logs
 *.log
 
-# Environment variables
-.env
-*.env
+# Checkpoints (optional - comment out if you want to upload)
+checkpoints/
+*.pth
+*.pt
+*.ckpt
 
-# Credentials
-*.json
-!package-lock.json
+# TensorBoard events
+tf_events/
 
-# Office backup files
-~$*.docx
-~$*.xlsx
-~$*.pptx
+# Inference results (large binary files)
+inference_results/
+*.fbin
+*.u64bin
+*.bin
+
+# Temporary files
 *.tmp
 *.bak
+~$*.docx
+~$*.xlsx
 
-# Large data files
-*.csv
-data/
-datasets/
+# Large data files (optional)
+# TencentGR_1k/
+# *.jsonl
+# *.pkl
+# *.pickle
 
-# Model checkpoints
-*.pkl
-*.pth
+# PDF papers (optional - comment out if you want to upload)
+# *.pdf
